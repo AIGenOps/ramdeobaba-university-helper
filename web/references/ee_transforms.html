@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signals &amp; Systems Transform Pairs &mdash; Ramdeobaba University</title>
+    <style>
+        :root {
+            --bg: #0a0f1d;
+            --surface: #10182b;
+            --border: rgba(255, 255, 255, 0.12);
+            --text: #f8fafc;
+            --muted: #94a3b8;
+            --gold: #cbb58b;
+            --blue: #38bdf8;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Plus Jakarta Sans", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 24px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        .header {
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--gold);
+            margin: 0 0 4px 0;
+        }
+        .subtitle {
+            color: var(--muted);
+            font-size: 12px;
+        }
+        .notice {
+            background: rgba(203, 181, 139, 0.1);
+            border: 1px solid rgba(203, 181, 139, 0.3);
+            border-radius: 6px;
+            padding: 10px 14px;
+            margin-bottom: 20px;
+            font-size: 12px;
+            color: #e2e8f0;
+        }
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--blue);
+            margin: 20px 0 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 24px;
+            font-size: 12px;
+        }
+        th, td {
+            border: 1px solid var(--border);
+            padding: 6px 10px;
+            text-align: left;
+        }
+        th {
+            background: var(--surface);
+            color: var(--gold);
+            font-weight: 600;
+        }
+        tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.02);
+        }
+        .mono {
+            font-family: ui-monospace, Menlo, Consolas, monospace;
+        }
+        .print-btn {
+            background: var(--gold);
+            color: #000;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        @media print {
+            body { background: #fff; color: #000; }
+            th, td { border-color: #ccc; }
+            th { background: #f0f0f0; color: #000; }
+            .print-btn { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1 class="title">Approved Examination Reference: Z-Transform &amp; Fourier Transform Pairs</h1>
+            <div class="subtitle">Ramdeobaba University Central Library &bull; Examination Aid Sheet</div>
+        </div>
+        <button class="print-btn" onclick="window.print()">Print / Save PDF</button>
+    </div>
+
+    <div class="notice">
+        <strong>Instruction:</strong> Discrete &amp; Continuous Signal Transform Properties. Permitted in examination halls when stated on question paper header.
+    </div>
+
+    <div class="section-title">Common Z-Transform Pairs (Discrete Time)</div>
+    <table>
+        <thead>
+            <tr>
+                <th>Sequence: x[n]</th>
+                <th>Z-Transform: X(z)</th>
+                <th>Region of Convergence (ROC)</th>
+            </tr>
+        </thead>
+        <tbody class="mono">
+            <tr><td>&delta;[n] (Unit Impulse)</td><td>1</td><td>All z</td></tr>
+            <tr><td>u[n] (Unit Step)</td><td>1 / (1 - z<sup>-1</sup>)</td><td>|z| &gt; 1</td></tr>
+            <tr><td>a<sup>n</sup> u[n]</td><td>1 / (1 - a z<sup>-1</sup>)</td><td>|z| &gt; |a|</td></tr>
+            <tr><td>-a<sup>n</sup> u[-n-1]</td><td>1 / (1 - a z<sup>-1</sup>)</td><td>|z| &lt; |a|</td></tr>
+            <tr><td>n a<sup>n</sup> u[n]</td><td>a z<sup>-1</sup> / (1 - a z<sup>-1</sup>)&sup2;</td><td>|z| &gt; |a|</td></tr>
+            <tr><td>cos(&omega;<sub>0</sub> n) u[n]</td><td>(1 - z<sup>-1</sup> cos &omega;<sub>0</sub>) / (1 - 2 z<sup>-1</sup> cos &omega;<sub>0</sub> + z<sup>-2</sup>)</td><td>|z| &gt; 1</td></tr>
+            <tr><td>sin(&omega;<sub>0</sub> n) u[n]</td><td>(z<sup>-1</sup> sin &omega;<sub>0</sub>) / (1 - 2 z<sup>-1</sup> cos &omega;<sub>0</sub> + z<sup>-2</sup>)</td><td>|z| &gt; 1</td></tr>
+        </tbody>
+    </table>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thermodynamic &amp; Steam Properties Reference &mdash; Ramdeobaba University</title>
+    <style>
+        :root {
+            --bg: #0a0f1d;
+            --surface: #10182b;
+            --border: rgba(255, 255, 255, 0.12);
+            --text: #f8fafc;
+            --muted: #94a3b8;
+            --gold: #cbb58b;
+            --blue: #38bdf8;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Plus Jakarta Sans", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 24px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        .header {
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--gold);
+            margin: 0 0 4px 0;
+        }
+        .subtitle {
+            color: var(--muted);
+            font-size: 12px;
+        }
+        .notice {
+            background: rgba(203, 181, 139, 0.1);
+            border: 1px solid rgba(203, 181, 139, 0.3);
+            border-radius: 6px;
+            padding: 10px 14px;
+            margin-bottom: 20px;
+            font-size: 12px;
+            color: #e2e8f0;
+        }
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--blue);
+            margin: 20px 0 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 24px;
+            font-size: 12px;
+        }
+        th, td {
+            border: 1px solid var(--border);
+            padding: 6px 10px;
+            text-align: left;
+        }
+        th {
+            background: var(--surface);
+            color: var(--gold);
+            font-weight: 600;
+        }
+        tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.02);
+        }
+        .mono {
+            font-family: ui-monospace, Menlo, Consolas, monospace;
+        }
+        .print-btn {
+            background: var(--gold);
+            color: #000;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        @media print {
+            body { background: #fff; color: #000; }
+            th, td { border-color: #ccc; }
+            th { background: #f0f0f0; color: #000; }
+            .print-btn { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1 class="title">Approved Examination Reference: Steam Tables &amp; Thermodynamic Data</h1>
+            <div class="subtitle">Ramdeobaba University Central Library &bull; Examination Aid Sheet</div>
+        </div>
+        <button class="print-btn" onclick="window.print()">Print / Save PDF</button>
+    </div>
+
+    <div class="notice">
+        <strong>Instruction:</strong> Standard reference properties of saturated water and steam. Permitted in examination halls when stated on question paper header.
+    </div>
+
+    <div class="section-title">Properties of Saturated Water &amp; Steam (Temperature Table)</div>
+    <table>
+        <thead>
+            <tr>
+                <th>Temp (&deg;C)</th>
+                <th>Press (bar)</th>
+                <th>v<sub>f</sub> (m&sup3;/kg)</th>
+                <th>v<sub>g</sub> (m&sup3;/kg)</th>
+                <th>h<sub>f</sub> (kJ/kg)</th>
+                <th>h<sub>fg</sub> (kJ/kg)</th>
+                <th>h<sub>g</sub> (kJ/kg)</th>
+                <th>s<sub>f</sub> (kJ/kg&middot;K)</th>
+                <th>s<sub>g</sub> (kJ/kg&middot;K)</th>
+            </tr>
+        </thead>
+        <tbody class="mono">
+            <tr><td>0.01</td><td>0.00611</td><td>0.001000</td><td>206.14</td><td>0.0</td><td>2501.3</td><td>2501.3</td><td>0.0000</td><td>9.1562</td></tr>
+            <tr><td>25.0</td><td>0.03169</td><td>0.001003</td><td>43.36</td><td>104.9</td><td>2442.3</td><td>2547.2</td><td>0.3674</td><td>8.5580</td></tr>
+            <tr><td>50.0</td><td>0.1235</td><td>0.001012</td><td>12.03</td><td>209.3</td><td>2382.7</td><td>2592.1</td><td>0.7038</td><td>8.0763</td></tr>
+            <tr><td>100.0</td><td>1.0133</td><td>0.001044</td><td>1.673</td><td>419.0</td><td>2257.0</td><td>2676.1</td><td>1.3069</td><td>7.3549</td></tr>
+            <tr><td>150.0</td><td>4.758</td><td>0.001091</td><td>0.3928</td><td>632.2</td><td>2114.3</td><td>2746.5</td><td>1.8418</td><td>6.8379</td></tr>
+            <tr><td>200.0</td><td>15.54</td><td>0.001157</td><td>0.1274</td><td>852.4</td><td>1940.7</td><td>2793.2</td><td>2.3309</td><td>6.4323</td></tr>
+            <tr><td>250.0</td><td>39.73</td><td>0.001251</td><td>0.0501</td><td>1085.4</td><td>1716.2</td><td>2801.5</td><td>2.7927</td><td>6.0730</td></tr>
+            <tr><td>300.0</td><td>85.81</td><td>0.001404</td><td>0.02167</td><td>1344.0</td><td>1404.9</td><td>2749.0</td><td>3.2534</td><td>5.7045</td></tr>
+            <tr><td>374.14 (Crit)</td><td>220.9</td><td>0.003155</td><td>0.003155</td><td>2099.3</td><td>0.0</td><td>2099.3</td><td>4.4298</td><td>4.4298</td></tr>
+        </tbody>
+    </table>
+</body>
+</html>

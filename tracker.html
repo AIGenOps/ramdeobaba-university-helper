@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RKNEc Central Library - Question Papers Synchronization</title>
+    <style>
+        :root {
+            --bg: #0b0f19;
+            --surface: #111827;
+            --surface-elevated: #1f2937;
+            --border: #374151;
+            --border-light: #4b5563;
+            --text-primary: #f9fafb;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+            --accent: #2563eb;
+            --accent-glow: #3b82f6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --mono-font: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+            --sans-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-primary);
+            font-family: var(--sans-font);
+            font-size: 14px;
+            line-height: 1.5;
+            padding: 24px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .title-block h1 {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            color: var(--text-primary);
+        }
+
+        .title-block .subtitle {
+            color: var(--text-secondary);
+            font-size: 13px;
+            margin-top: 4px;
+            font-family: var(--mono-font);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-family: var(--mono-font);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            background-color: var(--surface-elevated);
+            border: 1px solid var(--border);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--text-muted);
+        }
+
+        .status-dot.active {
+            background-color: var(--success);
+            box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+        }
+
+        .status-dot.indexing {
+            background-color: var(--warning);
+            box-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
+        }
+
+        .status-dot.completed {
+            background-color: var(--accent-glow);
+            box-shadow: 0 0 8px rgba(59, 130, 246, 0.4);
+        }
+
+        /* Progress Bar Section */
+        .progress-card {
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 18px 20px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 10px;
+        }
+
+        .progress-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .progress-percentage {
+            font-family: var(--mono-font);
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 8px;
+            background-color: var(--surface-elevated);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #2563eb, #38bdf8);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-subtext {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 12px;
+            font-family: var(--mono-font);
+            color: var(--text-secondary);
+        }
+
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        @media (max-width: 900px) {
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .metric-card {
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .metric-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .metric-value {
+            font-family: var(--mono-font);
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .metric-foot {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-family: var(--mono-font);
+        }
+
+        /* Two Column Layout */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-header {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-title {
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+        }
+
+        .panel-count {
+            font-family: var(--mono-font);
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Program Breakdown Table */
+        .table-container {
+            overflow-x: auto;
+            max-height: 380px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--surface-elevated);
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        td {
+            padding: 10px 16px;
+            border-bottom: 1px solid rgba(55, 65, 81, 0.5);
+            font-family: var(--mono-font);
+            color: var(--text-secondary);
+        }
+
+        tr:hover td {
+            background-color: rgba(255, 255, 255, 0.02);
+            color: var(--text-primary);
+        }
+
+        .col-program {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .progress-mini-track {
+            width: 80px;
+            height: 5px;
+            background-color: var(--surface-elevated);
+            border-radius: 3px;
+            overflow: hidden;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        .progress-mini-fill {
+            height: 100%;
+            background-color: var(--accent-glow);
+            width: 0%;
+        }
+
+        /* Activity Log Console */
+        .log-console {
+            background-color: #050811;
+            padding: 12px 16px;
+            font-family: var(--mono-font);
+            font-size: 12px;
+            line-height: 1.6;
+            max-height: 380px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column-reverse;
+            gap: 4px;
+        }
+
+        .log-line {
+            display: flex;
+            gap: 10px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .log-time {
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
+
+        .log-type {
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .log-type.FETCHED { color: var(--success); }
+        .log-type.SKIPPED { color: var(--text-muted); }
+        .log-type.INDEXED { color: var(--accent-glow); }
+        .log-type.ERROR   { color: var(--danger); }
+
+        .log-msg {
+            color: var(--text-secondary);
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border);
+            padding-top: 16px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--text-muted);
+            font-family: var(--mono-font);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="title-block">
+                <h1>RKNEc Central Library - Question Papers</h1>
+                <div class="subtitle">Source: ftp://103.220.82.76 &nbsp;|&nbsp; Target: ./PYQs</div>
+            </div>
+            <div class="status-badge" id="status-badge">
+                <span class="status-dot" id="status-dot"></span>
+                <span id="status-text">INITIALIZING</span>
+            </div>
+        </header>
+
+        <!-- Main Progress Bar -->
+        <div class="progress-card">
+            <div class="progress-header">
+                <span class="progress-title">Synchronization Progress</span>
+                <span class="progress-percentage" id="progress-pct">0.0%</span>
+            </div>
+            <div class="progress-track">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <div class="progress-subtext">
+                <span id="progress-files-sub">0 / 0 files processed</span>
+                <span id="progress-bytes-sub">0.0 MB / 0.0 MB</span>
+            </div>
+        </div>
+
+        <!-- Metric Cards -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-label">Files Downloaded</div>
+                <div class="metric-value" id="val-downloaded">0</div>
+                <div class="metric-foot" id="val-cached-foot">0 cached, 0 failed</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Data Transferred</div>
+                <div class="metric-value" id="val-data-downloaded">0.0 MB</div>
+                <div class="metric-foot" id="val-data-total-foot">Total: 0.0 MB</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Throughput / ETA</div>
+                <div class="metric-value" id="val-speed">0.0 MB/s</div>
+                <div class="metric-foot" id="val-eta">ETA: calculating...</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Directory Scans</div>
+                <div class="metric-value" id="val-dirs">0</div>
+                <div class="metric-foot" id="val-queue">Queue: 0 remaining</div>
+            </div>
+        </div>
+
+        <!-- Program Breakdown & Real-Time Console -->
+        <div class="content-grid">
+            <!-- Program Table -->
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-title">Program Breakdown</span>
+                    <span class="panel-count" id="programs-count">0 programs</span>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Program</th>
+                                <th>Discovered</th>
+                                <th>Completed</th>
+                                <th>Progress</th>
+                            </tr>
+                        </thead>
+                        <tbody id="programs-tbody">
+                            <tr>
+                                <td colspan="4" style="text-align: center; color: var(--text-muted); padding: 30px;">
+                                    Scanning directory tree...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Activity Log -->
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-title">Activity Console</span>
+                    <span class="panel-count" id="log-count">0 events</span>
+                </div>
+                <div class="log-console" id="log-console">
+                    <div class="log-line">
+                        <span class="log-time">--:--:--</span>
+                        <span class="log-type INDEXED">SYS</span>
+                        <span class="log-msg">Connecting to service monitor...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <span>Host: 103.220.82.76:21 (Passive Mode)</span>
+            <span id="footer-elapsed">Elapsed: 00:00:00</span>
+        </footer>
+    </div>
+
+    <script>
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0.0 MB';
+            const mb = bytes / (1024 * 1024);
+            if (mb < 1024) return mb.toFixed(1) + ' MB';
+            return (mb / 1024).toFixed(2) + ' GB';
+        }
+
+        function formatTime(seconds) {
+            if (!seconds || seconds <= 0 || !isFinite(seconds)) return '--:--';
+            const m = Math.floor(seconds / 60);
+            const s = Math.floor(seconds % 60);
+            if (m < 60) {
+                return `${m}m ${s.toString().padStart(2, '0')}s`;
+            }
+            const h = Math.floor(m / 60);
+            const remM = m % 60;
+            return `${h}h ${remM.toString().padStart(2, '0')}m`;
+        }
+
+        function formatElapsed(seconds) {
+            const h = Math.floor(seconds / 3600);
+            const m = Math.floor((seconds % 3600) / 60);
+            const s = Math.floor(seconds % 60);
+            return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }
+
+        async function fetchStatus() {
+            try {
+                const res = await fetch('/api/status');
+                if (!res.ok) return;
+                const data = await res.json();
+                updateUI(data);
+            } catch (e) {
+                console.error("Status fetch error", e);
+            }
+        }
+
+        function updateUI(d) {
+            // Status Badge
+            const dot = document.getElementById('status-dot');
+            const statusText = document.getElementById('status-text');
+            dot.className = 'status-dot';
+            if (d.status === 'COMPLETED') {
+                dot.classList.add('completed');
+                statusText.textContent = 'COMPLETED';
+            } else if (d.status === 'INDEXING') {
+                dot.classList.add('indexing');
+                statusText.textContent = 'INDEXING TREE';
+            } else {
+                dot.classList.add('active');
+                statusText.textContent = d.status || 'SYNCHRONIZING';
+            }
+
+            // Progress Bar
+            const pct = d.total_files > 0 ? (d.processed_files / d.total_files * 100) : 0;
+            const pctFixed = pct.toFixed(1);
+            document.getElementById('progress-pct').textContent = pctFixed + '%';
+            document.getElementById('progress-fill').style.width = pctFixed + '%';
+            document.getElementById('progress-files-sub').textContent = 
+                `${d.processed_files.toLocaleString()} / ${d.total_files.toLocaleString()} files processed`;
+            document.getElementById('progress-bytes-sub').textContent = 
+                `${formatBytes(d.processed_bytes)} / ${formatBytes(d.total_bytes)}`;
+
+            // Metric Cards
+            document.getElementById('val-downloaded').textContent = d.downloaded_files.toLocaleString();
+            document.getElementById('val-cached-foot').textContent = 
+                `${d.skipped_files.toLocaleString()} cached, ${d.failed_files.toLocaleString()} failed`;
+
+            document.getElementById('val-data-downloaded').textContent = formatBytes(d.downloaded_bytes);
+            document.getElementById('val-data-total-foot').textContent = `Total: ${formatBytes(d.total_bytes)}`;
+
+            document.getElementById('val-speed').textContent = `${d.speed_mb_s.toFixed(2)} MB/s`;
+            document.getElementById('val-eta').textContent = d.status === 'COMPLETED' ? 'Finished' : `ETA: ${formatTime(d.eta_seconds)}`;
+
+            document.getElementById('val-dirs').textContent = d.dirs_scanned.toLocaleString();
+            document.getElementById('val-queue').textContent = `Queue: ${d.dirs_in_queue.toLocaleString()} remaining`;
+
+            // Programs Table
+            if (d.programs && Object.keys(d.programs).length > 0) {
+                const tbody = document.getElementById('programs-tbody');
+                const pKeys = Object.keys(d.programs).sort();
+                document.getElementById('programs-count').textContent = `${pKeys.length} programs`;
+
+                let html = '';
+                for (const p of pKeys) {
+                    const info = d.programs[p];
+                    const pPct = info.total > 0 ? ((info.completed / info.total) * 100).toFixed(0) : 0;
+                    html += `<tr>
+                        <td class="col-program">${p}</td>
+                        <td>${info.total}</td>
+                        <td>${info.completed}</td>
+                        <td>
+                            <div class="progress-mini-track">
+                                <div class="progress-mini-fill" style="width: ${pPct}%"></div>
+                            </div>
+                            ${pPct}%
+                        </td>
+                    </tr>`;
+                }
+                tbody.innerHTML = html;
+            }
+
+            // Logs Console
+            if (d.logs && d.logs.length > 0) {
+                const logBox = document.getElementById('log-console');
+                document.getElementById('log-count').textContent = `${d.logs.length} events`;
+                
+                let logHtml = '';
+                // d.logs has newest first or oldest first. We will assume newest first.
+                for (const item of d.logs) {
+                    const typeClass = item.type || 'INDEXED';
+                    logHtml += `<div class="log-line">
+                        <span class="log-time">${item.time}</span>
+                        <span class="log-type ${typeClass}">${typeClass}</span>
+                        <span class="log-msg">${item.msg}</span>
+                    </div>`;
+                }
+                logBox.innerHTML = logHtml;
+            }
+
+            // Footer
+            document.getElementById('footer-elapsed').textContent = `Elapsed: ${formatElapsed(d.elapsed_seconds || 0)}`;
+        }
+
+        // Poll every 1 second
+        fetchStatus();
+        setInterval(fetchStatus, 1000);
+    </script>
+</body>
+</html>

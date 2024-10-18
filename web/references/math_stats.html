@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mathematical &amp; Statistical Reference Sheet &mdash; Ramdeobaba University</title>
+    <style>
+        :root {
+            --bg: #0a0f1d;
+            --surface: #10182b;
+            --border: rgba(255, 255, 255, 0.12);
+            --text: #f8fafc;
+            --muted: #94a3b8;
+            --gold: #cbb58b;
+            --blue: #38bdf8;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Plus Jakarta Sans", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 24px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        .header {
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--gold);
+            margin: 0 0 4px 0;
+        }
+        .subtitle {
+            color: var(--muted);
+            font-size: 12px;
+        }
+        .notice {
+            background: rgba(203, 181, 139, 0.1);
+            border: 1px solid rgba(203, 181, 139, 0.3);
+            border-radius: 6px;
+            padding: 10px 14px;
+            margin-bottom: 20px;
+            font-size: 12px;
+            color: #e2e8f0;
+        }
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--blue);
+            margin: 20px 0 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 24px;
+            font-size: 12px;
+        }
+        th, td {
+            border: 1px solid var(--border);
+            padding: 6px 10px;
+            text-align: left;
+        }
+        th {
+            background: var(--surface);
+            color: var(--gold);
+            font-weight: 600;
+        }
+        tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.02);
+        }
+        .mono {
+            font-family: ui-monospace, Menlo, Consolas, monospace;
+        }
+        .print-btn {
+            background: var(--gold);
+            color: #000;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        @media print {
+            body { background: #fff; color: #000; }
+            th, td { border-color: #ccc; }
+            th { background: #f0f0f0; color: #000; }
+            .print-btn { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1 class="title">Approved Examination Reference: Mathematical &amp; Statistical Tables</h1>
+            <div class="subtitle">Ramdeobaba University Central Library &bull; Examination Aid Sheet</div>
+        </div>
+        <button class="print-btn" onclick="window.print()">Print / Save PDF</button>
+    </div>
+
+    <div class="notice">
+        <strong>Instruction:</strong> This supplementary sheet provides standard statistical values and common transform pairs. Its use in examinations is governed strictly by the explicit instructions printed on your question paper (e.g., &ldquo;Use of statistical tables permitted&rdquo;).
+    </div>
+
+    <div class="section-title">1. Standard Normal Distribution Table (Cumulative Area: &Phi;(z) for 0 &le; z &le; 3.0)</div>
+    <table>
+        <thead>
+            <tr>
+                <th>z</th>
+                <th>0.00</th>
+                <th>0.01</th>
+                <th>0.02</th>
+                <th>0.03</th>
+                <th>0.04</th>
+                <th>0.05</th>
+                <th>0.06</th>
+                <th>0.07</th>
+                <th>0.08</th>
+                <th>0.09</th>
+            </tr>
+        </thead>
+        <tbody class="mono">
+            <tr><td>0.0</td><td>0.5000</td><td>0.5040</td><td>0.5080</td><td>0.5120</td><td>0.5160</td><td>0.5199</td><td>0.5239</td><td>0.5279</td><td>0.5319</td><td>0.5359</td></tr>
+            <tr><td>0.5</td><td>0.6915</td><td>0.6950</td><td>0.6985</td><td>0.7019</td><td>0.7054</td><td>0.7088</td><td>0.7123</td><td>0.7157</td><td>0.7190</td><td>0.7224</td></tr>
+            <tr><td>1.0</td><td>0.8413</td><td>0.8438</td><td>0.8461</td><td>0.8485</td><td>0.8508</td><td>0.8531</td><td>0.8554</td><td>0.8577</td><td>0.8599</td><td>0.8621</td></tr>
+            <tr><td>1.5</td><td>0.9332</td><td>0.9345</td><td>0.9357</td><td>0.9370</td><td>0.9382</td><td>0.9394</td><td>0.9406</td><td>0.9418</td><td>0.9429</td><td>0.9441</td></tr>
+            <tr><td>1.645</td><td colspan="10" style="text-align:center;">90% Two-tailed Confidence Limit (One-tailed 95% = 0.9500)</td></tr>
+            <tr><td>1.960</td><td colspan="10" style="text-align:center;">95% Two-tailed Confidence Limit (Area = 0.9750)</td></tr>
+            <tr><td>2.0</td><td>0.9772</td><td>0.9778</td><td>0.9783</td><td>0.9788</td><td>0.9793</td><td>0.9798</td><td>0.9803</td><td>0.9808</td><td>0.9812</td><td>0.9817</td></tr>
+            <tr><td>2.5</td><td>0.9938</td><td>0.9940</td><td>0.9941</td><td>0.9943</td><td>0.9945</td><td>0.9946</td><td>0.9948</td><td>0.9949</td><td>0.9951</td><td>0.9952</td></tr>
+            <tr><td>2.576</td><td colspan="10" style="text-align:center;">99% Two-tailed Confidence Limit (Area = 0.9950)</td></tr>
+            <tr><td>3.0</td><td>0.9987</td><td>0.9987</td><td>0.9987</td><td>0.9988</td><td>0.9988</td><td>0.9989</td><td>0.9989</td><td>0.9989</td><td>0.9990</td><td>0.9990</td></tr>
+        </tbody>
+    </table>
+
+    <div class="section-title">2. Fundamental Laplace Transform Pairs</div>
+    <table>
+        <thead>
+            <tr>
+                <th>Time Domain: f(t) [t &ge; 0]</th>
+                <th>s-Domain: F(s) = L{f(t)}</th>
+                <th>Region of Convergence (ROC)</th>
+            </tr>
+        </thead>
+        <tbody class="mono">
+            <tr><td>1 (Unit Step)</td><td>1 / s</td><td>Re(s) &gt; 0</td></tr>
+            <tr><td>t<sup>n</sup> (n = 1, 2, 3...)</td><td>n! / s<sup>n+1</sup></td><td>Re(s) &gt; 0</td></tr>
+            <tr><td>e<sup>at</sup></td><td>1 / (s - a)</td><td>Re(s) &gt; a</td></tr>
+            <tr><td>sin(&omega;t)</td><td>&omega; / (s<sup>2</sup> + &omega;<sup>2</sup>)</td><td>Re(s) &gt; 0</td></tr>
+            <tr><td>cos(&omega;t)</td><td>s / (s<sup>2</sup> + &omega;<sup>2</sup>)</td><td>Re(s) &gt; 0</td></tr>
+            <tr><td>e<sup>at</sup> sin(&omega;t)</td><td>&omega; / ((s - a)<sup>2</sup> + &omega;<sup>2</sup>)</td><td>Re(s) &gt; a</td></tr>
+            <tr><td>e<sup>at</sup> cos(&omega;t)</td><td>(s - a) / ((s - a)<sup>2</sup> + &omega;<sup>2</sup>)</td><td>Re(s) &gt; a</td></tr>
+            <tr><td>df(t) / dt</td><td>s F(s) - f(0<sup>-</sup>)</td><td>Standard</td></tr>
+            <tr><td>&int; f(&tau;) d&tau;</td><td>F(s) / s</td><td>Standard</td></tr>
+        </tbody>
+    </table>
+</body>
+</html>

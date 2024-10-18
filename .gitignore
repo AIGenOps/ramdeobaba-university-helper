@@ -1,0 +1,34 @@
+# Downloaded Question Papers (Downloadable via pull_pyqs.py)
+/PYQs/
+
+# Workspace root sub-projects (independent repositories)
+/anatomy/
+/challenges/
+/ctftime/
+/CTFTRACKER/
+/DesignPatents/
+/Digital Products/
+/HopeFund/
+/Librix/
+/nagpur-food-guide/
+/Partners/
+/PostExAI/
+/zestogram/
+/WP
+/scratch/
+cybercomm.csv
+cybercomm.xlsx
+
+# Python & Environment caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.log
+.env
+.venv/
+env/
+venv/
+
+# OS Files
+.DS_Store
+Thumbs.db
