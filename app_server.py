@@ -76,7 +76,12 @@ class ArchiveHandler(BaseHTTPRequestHandler):
                 return
 
             if not os.path.isfile(real_file_path):
-                self.send_error(404, "Document Not Found")
+                # Seamless fallback to Hugging Face CDN if file not present locally
+                hf_url = f"https://huggingface.co/datasets/aigenops/rbu-pyqs/resolve/main/{urllib.parse.quote(rel_path)}"
+                self.send_response(307)
+                self.send_header("Location", hf_url)
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
                 return
 
             self.serve_pdf(real_file_path)

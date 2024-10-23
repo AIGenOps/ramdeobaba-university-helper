@@ -134,6 +134,17 @@ function toTitleCase(rawTitle) {
     }).join(" ");
 }
 
+// Hugging Face Global CDN for Question Papers Archive
+const HF_DATASET_CDN = "https://huggingface.co/datasets/aigenops/rbu-pyqs/resolve/main";
+
+function getPaperFileUrl(docPath) {
+    const clean = encodeURIComponent(docPath).replace(/%2F/g, '/');
+    if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+        return `/PYQs/${clean}`;
+    }
+    return `${HF_DATASET_CDN}/${clean}`;
+}
+
 // Application State
 const state = {
     allPapers: [],
@@ -958,7 +969,7 @@ function renderSubjectGroups() {
         // Expanded drawer rows (One-click row to read online + quick download icon)
         let drawerRowsHtml = "";
         group.papers.forEach(p => {
-            const fileUrl = `/PYQs/${encodeURIComponent(p.path).replace(/%2F/g, '/')}`;
+            const fileUrl = getPaperFileUrl(p.path);
             const yr = p.year ? `${p.session} ${p.year}` : p.session;
             const scheme = getCurriculumScheme(p.year);
             const isReg = p.type === "Regular";
@@ -1076,7 +1087,7 @@ function renderFlatPapers() {
 
     let html = '<div class="papers-grid">';
     pageItems.forEach(item => {
-        const fileUrl = `/PYQs/${encodeURIComponent(item.path).replace(/%2F/g, '/')}`;
+        const fileUrl = getPaperFileUrl(item.path);
         const yearText = item.year ? `${item.session} ${item.year}` : item.session;
         const examLabel = item.type === "Make-Up" ? "Make-Up" : "Regular";
         const scheme = getCurriculumScheme(item.year);
@@ -1371,7 +1382,7 @@ window.openReaderById = function(id) {
 
 function openReader(doc, { updateUrl = true } = {}) {
     state.currentReaderDoc = doc;
-    const fileUrl = `/PYQs/${encodeURIComponent(doc.path).replace(/%2F/g, '/')}`;
+    const fileUrl = getPaperFileUrl(doc.path);
 
     dom.modalTitle.textContent = doc.title + (doc.code ? ` (${doc.code})` : "");
     const yearText = doc.year ? `${doc.session} ${doc.year}` : doc.session;
@@ -1409,7 +1420,7 @@ function openReader(doc, { updateUrl = true } = {}) {
 }
 
 function loadDocumentInViewer(doc) {
-    const fileUrl = `/PYQs/${encodeURIComponent(doc.path).replace(/%2F/g, '/')}`;
+    const fileUrl = getPaperFileUrl(doc.path);
 
     if (state.viewerEngine === "canvas" && window.pdfjsLib) {
         // Hide iframe, show canvas toolbar & wrap
