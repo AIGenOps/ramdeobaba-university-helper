@@ -468,8 +468,24 @@ function bindEvents() {
 
 async function loadCatalog() {
     try {
-        const res = await fetch("/catalog.min.json");
-        if (!res.ok) throw new Error("Failed to load catalog");
+        let res = null;
+        try {
+            res = await fetch("./catalog.min.json");
+            if (!res.ok) res = null;
+        } catch (e) {}
+
+        if (!res) {
+            try {
+                res = await fetch("/catalog.min.json");
+                if (!res.ok) res = null;
+            } catch (e) {}
+        }
+
+        if (!res) {
+            res = await fetch("https://huggingface.co/datasets/aigenops/rbu-pyqs/resolve/main/catalog.min.json");
+        }
+
+        if (!res || !res.ok) throw new Error("Failed to load catalog");
         const data = await res.json();
 
         // Check if compact schema with lookups
@@ -1362,7 +1378,7 @@ function initViewerEngine() {
     state.viewerEngine = isMobile ? "canvas" : "native";
 
     if (window.pdfjsLib) {
-        pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.js";
+        pdfjsLib.GlobalWorkerOptions.workerSrc = "./pdf.worker.min.js";
     }
 }
 
@@ -1600,11 +1616,20 @@ function closeReader({ updateUrl = true } = {}) {
 // SPA ROUTER, HISTORY MANAGEMENT & DEEP LINK SYNCHRONIZER
 // ==========================================================================
 
+function resolveAppUrl(url) {
+    const basePath = window.location.pathname;
+    if (url === "/" || !url) return basePath;
+    if (url.startsWith("/?")) return `${basePath}?${url.slice(2)}`;
+    if (url.startsWith("?")) return `${basePath}${url}`;
+    return url;
+}
+
 window.navigate = function(url, { push = true } = {}) {
+    const targetUrl = resolveAppUrl(url);
     if (push) {
-        window.history.pushState({}, "", url);
+        window.history.pushState({}, "", targetUrl);
     } else {
-        window.history.replaceState({}, "", url);
+        window.history.replaceState({}, "", targetUrl);
     }
     syncStateFromUrl();
 };
