@@ -173,7 +173,8 @@ const state = {
     pdfDoc: null,
     pdfPageNum: 1,
     pdfScale: 1.2,
-    viewerEngine: "native"       // 'native' or 'canvas'
+    viewerEngine: "native",       // 'native' or 'canvas'
+    currentBlobUrl: null
 };
 
 // DOM Cache
@@ -255,6 +256,7 @@ function cacheDom() {
     dom.viewerToggleBtn = document.getElementById("viewer-toggle-btn");
     dom.viewerToggleLabel = document.getElementById("viewer-toggle-label");
     dom.modalIframe = document.getElementById("modal-iframe");
+    dom.readerLoading = document.getElementById("reader-loading");
     dom.modalPrevPaper = document.getElementById("modal-prev-paper");
     dom.modalNextPaper = document.getElementById("modal-next-paper");
 
@@ -1373,8 +1375,18 @@ function updateResultsMeta() {
 // FEATURE 5: MOBILE-OPTIMIZED PDF VIEWER (PDF.JS CANVAS FALLBACK)
 // ==========================================================================
 
+function showViewerLoading() {
+    if (dom.readerLoading) dom.readerLoading.style.display = "flex";
+}
+
+function hideViewerLoading() {
+    if (dom.readerLoading) dom.readerLoading.style.display = "none";
+}
+
 function initViewerEngine() {
     const isMobile = ('ontouchstart' in window) || navigator.maxTouchPoints > 0 || window.innerWidth <= 768;
+    // On mobile devices, PDF.js canvas viewer renders reliably with pinch/swipe controls
+    // On desktop, native blob viewer renders inline without triggering download
     state.viewerEngine = isMobile ? "canvas" : "native";
 
     if (window.pdfjsLib) {
@@ -1404,9 +1416,30 @@ function openReader(doc, { updateUrl = true } = {}) {
     const yearText = doc.year ? `${doc.session} ${doc.year}` : doc.session;
     dom.modalMeta.textContent = `${doc.program} • ${doc.branch} • ${doc.sem} • ${yearText} (${doc.type})`;
 
-    dom.modalOpenTab.href = fileUrl;
+    // Explicit download button for students who intentionally want to save the PDF
     dom.modalDownload.href = fileUrl;
     dom.modalDownload.download = `${doc.title}.pdf`;
+
+    // Open in New Tab button: opens inline blob so it never triggers automatic download
+    dom.modalOpenTab.onclick = function(e) {
+        e.preventDefault();
+        if (state.currentBlobUrl) {
+            window.open(state.currentBlobUrl, "_blank");
+        } else {
+            showViewerLoading();
+            fetch(fileUrl)
+                .then(r => r.blob())
+                .then(b => {
+                    hideViewerLoading();
+                    const bUrl = URL.createObjectURL(new Blob([b], { type: "application/pdf" }));
+                    window.open(bUrl, "_blank");
+                })
+                .catch(() => {
+                    hideViewerLoading();
+                    window.open(fileUrl, "_blank");
+                });
+        }
+    };
 
     // Feature 10: Check for supplementary exam aids
     const aid = getSubjectSupplementaryAids(doc.title);
@@ -1435,11 +1468,18 @@ function openReader(doc, { updateUrl = true } = {}) {
     }
 }
 
-function loadDocumentInViewer(doc) {
+async function loadDocumentInViewer(doc) {
     const fileUrl = getPaperFileUrl(doc.path);
+    showViewerLoading();
+
+    // Revoke previous blob URL to prevent memory leaks
+    if (state.currentBlobUrl) {
+        URL.revokeObjectURL(state.currentBlobUrl);
+        state.currentBlobUrl = null;
+    }
 
     if (state.viewerEngine === "canvas" && window.pdfjsLib) {
-        // Hide iframe, show canvas toolbar & wrap
+        // PDF.js Canvas Rendering (Mobile or user-toggled)
         dom.modalIframe.style.display = "none";
         dom.canvasToolbar.style.display = "flex";
         dom.canvasViewerWrap.style.display = "flex";
@@ -1447,23 +1487,58 @@ function loadDocumentInViewer(doc) {
         state.pdfPageNum = 1;
         state.pdfScale = window.innerWidth <= 640 ? 0.75 : 1.1;
 
-        pdfjsLib.getDocument(fileUrl).promise.then(pdf => {
+        try {
+            const loadingTask = pdfjsLib.getDocument({
+                url: fileUrl,
+                cMapUrl: "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/cmaps/",
+                cMapPacked: true,
+            });
+            const pdf = await loadingTask.promise;
             state.pdfDoc = pdf;
             dom.pdfPageNumIndicator.textContent = `Page 1 of ${pdf.numPages}`;
             renderCanvasPage(1);
-        }).catch(err => {
-            console.error("PDF.js render error, falling back to native iframe", err);
-            // Fallback to native iframe
-            state.viewerEngine = "native";
-            loadDocumentInViewer(doc);
-        });
-
+            hideViewerLoading();
+        } catch (err) {
+            console.warn("PDF.js canvas render error, falling back to blob iframe:", err);
+            await loadBlobIframe(fileUrl);
+        }
     } else {
-        // Native iframe viewer
-        dom.canvasToolbar.style.display = "none";
-        dom.canvasViewerWrap.style.display = "none";
-        dom.modalIframe.style.display = "block";
-        dom.modalIframe.src = fileUrl + "#toolbar=1&navpanes=0";
+        await loadBlobIframe(fileUrl);
+    }
+}
+
+async function loadBlobIframe(fileUrl) {
+    dom.canvasToolbar.style.display = "none";
+    dom.canvasViewerWrap.style.display = "none";
+    dom.modalIframe.style.display = "block";
+
+    try {
+        // Fetch document bytes into local Blob
+        // This strips the remote 'Content-Disposition: attachment' header from Hugging Face
+        // and enables the browser's native PDF engine to view the file directly in the browser!
+        const res = await fetch(fileUrl);
+        if (!res.ok) throw new Error("HTTP error " + res.status);
+        const buffer = await res.arrayBuffer();
+        const pdfBlob = new Blob([buffer], { type: "application/pdf" });
+        state.currentBlobUrl = URL.createObjectURL(pdfBlob);
+        dom.modalIframe.src = state.currentBlobUrl + "#toolbar=1&navpanes=0";
+        hideViewerLoading();
+    } catch (e) {
+        console.error("Failed to load PDF via blob iframe:", e);
+        hideViewerLoading();
+        if (window.pdfjsLib && state.viewerEngine !== "canvas") {
+            state.viewerEngine = "canvas";
+            try {
+                const pdf = await pdfjsLib.getDocument(fileUrl).promise;
+                state.pdfDoc = pdf;
+                dom.modalIframe.style.display = "none";
+                dom.canvasToolbar.style.display = "flex";
+                dom.canvasViewerWrap.style.display = "flex";
+                renderCanvasPage(1);
+            } catch (ce) {
+                console.error("Canvas fallback also failed:", ce);
+            }
+        }
     }
 }
 
@@ -1596,6 +1671,11 @@ window.navPaperRelative = function(delta) {
 function closeReader({ updateUrl = true } = {}) {
     dom.modal.style.display = "none";
     dom.modalIframe.src = "about:blank";
+    hideViewerLoading();
+    if (state.currentBlobUrl) {
+        URL.revokeObjectURL(state.currentBlobUrl);
+        state.currentBlobUrl = null;
+    }
     if (dom.modalAidBtn) dom.modalAidBtn.style.display = "none";
     document.body.style.overflow = "auto";
     state.currentReaderDoc = null;

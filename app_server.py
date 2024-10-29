@@ -78,11 +78,26 @@ class ArchiveHandler(BaseHTTPRequestHandler):
             if not os.path.isfile(real_file_path):
                 # Seamless fallback to Hugging Face CDN if file not present locally
                 hf_url = f"https://huggingface.co/datasets/aigenops/rbu-pyqs/resolve/main/{urllib.parse.quote(rel_path)}"
-                self.send_response(307)
-                self.send_header("Location", hf_url)
-                self.send_header("Access-Control-Allow-Origin", "*")
-                self.end_headers()
-                return
+                try:
+                    req = urllib.request.Request(hf_url, headers={"User-Agent": "Mozilla/5.0"})
+                    with urllib.request.urlopen(req, timeout=15) as resp:
+                        pdf_data = resp.read()
+                    filename = os.path.basename(real_file_path)
+                    self.send_response(200)
+                    self.send_header("Content-Type", "application/pdf")
+                    self.send_header("Content-Length", str(len(pdf_data)))
+                    self.send_header("Content-Disposition", f'inline; filename="{filename}"')
+                    self.send_header("Access-Control-Allow-Origin", "*")
+                    self.end_headers()
+                    self.wfile.write(pdf_data)
+                    return
+                except Exception as e:
+                    print(f"Fallback proxy error: {e}")
+                    self.send_response(307)
+                    self.send_header("Location", hf_url)
+                    self.send_header("Access-Control-Allow-Origin", "*")
+                    self.end_headers()
+                    return
 
             self.serve_pdf(real_file_path)
             return

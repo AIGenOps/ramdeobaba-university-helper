@@ -331,6 +331,10 @@
 
             <!-- Document Viewing Frame (Native iframe or Canvas) -->
             <div class="reader-frame-body" id="reader-frame-body">
+                <div id="reader-loading" class="reader-loading" style="display: none;">
+                    <div class="reader-spinner"></div>
+                    <span class="reader-loading-text">Loading question paper...</span>
+                </div>
                 <iframe id="modal-iframe" src="about:blank" frameborder="0"></iframe>
                 <div id="canvas-viewer-wrap" class="canvas-viewer-wrap" style="display: none;">
                     <canvas id="pdf-render-canvas"></canvas>
